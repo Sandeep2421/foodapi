@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        #results {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .meal {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            width: 250px;
+            text-align: center;
+        }
+        img {
+            width: 100%;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dish Search</h1>
+    <input type="text" id="inp" placeholder="Enter dish name">
+    <button onclick="foodapi()">Search</button>
+
+    <div id="results"></div>
+
+    <script>
+        async function foodapi() {
+            const inp = document.getElementById("inp").value;
+            const res = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${inp}`);
+            const data = await res.json();
+
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = "";
+
+            if (data.meals) {
+                data.meals.forEach(meal => {
+                    const mealDiv = document.createElement("div");
+                    mealDiv.classList.add("meal");
+
+                    mealDiv.innerHTML = `
+                        <h3>${meal.strMeal}</h3>
+                        <img src="${meal.strMealThumb}" alt="${meal.strMeal}">
+                        <p><strong>Category:</strong> ${meal.strCategory || "Unknown"}</p>
+                        <p><strong>Area:</strong> ${meal.strArea || "Unknown"}</p>
+                    `;
+
+                    resultsDiv.appendChild(mealDiv);
+                });
+            } else {
+                resultsDiv.innerHTML = "<p>No results found. Please try a different dish.</p>";
+            }
+        }
+    </script>
+</body>
+</html>
